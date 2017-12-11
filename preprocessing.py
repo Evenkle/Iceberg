@@ -31,8 +31,8 @@ def fourier_and_reverse(band, center_size):
     crow, ccol = round(rows / 2), round(cols / 2)
     magnitude_spectrum = 20 * np.log(np.abs(fshift))
     fshift[crow - center_size:crow + center_size, ccol - center_size:ccol + center_size] = 0
-    #plt.imshow(magnitude_spectrum, cmap='gray')
-    #plt.show()
+    # plt.imshow(magnitude_spectrum, cmap='gray')
+    # plt.show()
     f_ishift = np.fft.ifftshift(fshift)
     img_back = np.fft.ifft2(f_ishift)
     img_back = np.abs(img_back)
@@ -49,7 +49,7 @@ def remove_noise(center_size=1, bands=None):
 
 
 def nabla(band):
-    derivates =  np.gradient(band)
+    derivates = np.gradient(band)
     # arrx = band.convolve2d(band, xder, mode='valid')
     # arry = band.convolve2d(band, yder, mode='valid')
     return np.hypot(derivates[0], derivates[1])
@@ -103,7 +103,7 @@ def prep_dataset(data):
         data[i]['band_nabla'] = nabla(added).flatten().tolist()
 
         # title = 'iceberg' if data[i]['is_iceberg'] else 'ship'
-        plt.subplot(321), plt.title('Fourier HH '+title), plt.imshow(images[i][0], cmap='gray')
+        plt.subplot(321), plt.title('Fourier HH ' + title), plt.imshow(images[i][0], cmap='gray')
         plt.subplot(322), plt.title('Fourier HV'), plt.imshow(images[i][1], cmap='gray')
         plt.subplot(323), plt.title('Added fourier'), plt.imshow(added, cmap='gray')
         plt.subplot(324), plt.title('Nabla'), plt.imshow(nabla(added), cmap='gray')
@@ -116,7 +116,7 @@ def main():
     data = read_dataset('train.json')
     data = prep_dataset(data)
     write_dataset('train_processed.json', data)
-    data = None # Use less memory
+    data = None  # Use less memory
     data = prep_dataset(read_dataset('test.json'))
 
     chunk_size = len(data) // 10
@@ -142,7 +142,7 @@ def nabla_analyze(data):
     original.append(np.add(original[0], original[1]))
 
     fourier = [fourier_and_reverse(band, 1) for band in original]
-    nabla_list = [nabla(fourier[0]), nabla(fourier[1]), nabla(fourier[2]),nabla(np.add(fourier[0], fourier[1]))]
+    nabla_list = [nabla(fourier[0]), nabla(fourier[1]), nabla(fourier[2]), nabla(np.add(fourier[0], fourier[1]))]
     # nabla_first = [fourier_and_reverse(nabla(band), 1) for band in original]
     '''
     plt.subplot(221)
@@ -168,7 +168,7 @@ def nabla_analyze(data):
     plt.suptitle('Noise-filtered and gradient image of ' + ('iceberg' if data['is_iceberg'] else 'ship'), size=20)
     plt.subplot(223)
     '''
-    plt.suptitle('Gradient, image of '+ ('iceberg' if data['is_iceberg'] else 'ship'), size=20)
+    plt.suptitle('Gradient, image of ' + ('iceberg' if data['is_iceberg'] else 'ship'), size=20)
     plt.imshow(nabla_list[2], cmap='gray')
     plt.show()
     '''
@@ -199,6 +199,8 @@ def nabla_analyze(data):
     # plt.imshow(nabla_first[2], cmap='gray')
     #plt.show()
     '''
+
+
 def fourier_analyze(datapoint, center_size):
     """
     Used to experiment with and debugging the fourier analysis
@@ -218,6 +220,7 @@ def fourier_analyze(datapoint, center_size):
     plt.title('Reverse HV'), plt.xticks([]), plt.yticks([])
     plt.show()
     return np.mean(reversed_band_1), np.max(reversed_band_1)
+
 
 def max_mean_noise(data):
     """
@@ -239,4 +242,3 @@ if __name__ == '__main__':
     dataset = read_dataset('train.json')
     for datapoint in dataset:
         nabla_analyze(datapoint)
-
